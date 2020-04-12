@@ -11,7 +11,7 @@ I have USART1 working and I have USART connected to 'stdout'. So 'printf' and 'w
 
 I can do memory to memory DMA.
 
-There is code to control the buildin LED (PC13).
+There is code to control the built in LED (PC13).
 
 I am using [ChaN](http://elm-chan.org/) xprintf
 
