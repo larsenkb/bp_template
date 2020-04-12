@@ -22,3 +22,4 @@ Some of the features I would like to get working in the near future are:
 * Add 'stdin' support
 * Add I2C support
 * Add SPI support
+* Add Serial USB support
