@@ -5,3 +5,5 @@ main.map
 stm32/*.o
 stm32/*.d
 stm32/libbp.a
+onewire/*.o
+onewire/*.d
