@@ -34,7 +34,8 @@ const unsigned char crc_table[] = {
     116, 42, 200, 150, 21, 75, 169, 247, 182, 232, 10, 84, 215, 137, 107, 53
 };
 
-void one_wire_init(GPIO_TypeDef *g, uint16_t p, TIM_TypeDef *t) {
+void one_wire_init(GPIO_TypeDef *g, uint16_t p, TIM_TypeDef *t) 
+{
     gpio = g;
     pin = p;
     timer = t;
@@ -58,7 +59,8 @@ void one_wire_init(GPIO_TypeDef *g, uint16_t p, TIM_TypeDef *t) {
     GPIO_Init(gpio, &GPIO_InitStructure);
 }
 
-bool one_wire_reset_pulse() {
+bool one_wire_reset_pulse() 
+{
     // Pull bus down for 500 us (min. 480 us)
     GPIO_ResetBits(gpio, pin);
     delay_us(timer, 500);
@@ -82,7 +84,8 @@ bool one_wire_reset_pulse() {
     return true;
 }
 
-void one_wire_write_1() {
+void one_wire_write_1() 
+{
     // Pull bus down for 15 us
     GPIO_ResetBits(gpio, pin);
     delay_us(timer, 15);
@@ -92,7 +95,8 @@ void one_wire_write_1() {
     delay_us(timer, 50);
 }
 
-void one_wire_write_0() {
+void one_wire_write_0() 
+{
     // Pull bus down for 60 us
     GPIO_ResetBits(gpio, pin);
     delay_us(timer, 60);
@@ -102,7 +106,8 @@ void one_wire_write_0() {
     delay_us(timer, 5);
 }
 
-void one_wire_write_bit(bool bit) {
+void one_wire_write_bit(bool bit) 
+{
     if (bit) {
         one_wire_write_1();
     } else {
@@ -110,7 +115,8 @@ void one_wire_write_bit(bool bit) {
     }
 }
 
-bool one_wire_read_bit() {
+bool one_wire_read_bit() 
+{
     // Pull bus down for 5 us
     GPIO_ResetBits(gpio, pin);
     delay_us(timer, 5);
@@ -133,7 +139,8 @@ bool one_wire_read_bit() {
     }
 }
 
-void one_wire_write_byte(uint8_t data) {
+void one_wire_write_byte(uint8_t data) 
+{
     uint8_t i;
     for (i = 0; i < 8; ++i) {
         if ((data >> i) & 1) {
@@ -144,7 +151,8 @@ void one_wire_write_byte(uint8_t data) {
     }
 }
 
-uint8_t one_wire_read_byte() {
+uint8_t one_wire_read_byte() 
+{
     uint8_t i;
     uint8_t data = 0;
     bool bit;
@@ -155,7 +163,8 @@ uint8_t one_wire_read_byte() {
     return data;
 }
 
-void one_wire_reset_crc() {
+void one_wire_reset_crc() 
+{
     crc8 = 0;
 }
 
@@ -168,7 +177,8 @@ uint8_t one_wire_crc(uint8_t data) {
     return crc8;
 }
 
-void one_wire_read_rom() {
+void one_wire_read_rom() 
+{
     one_wire_reset_pulse();
     one_wire_write_byte(0x33);
     one_wire_read_byte();
@@ -279,7 +289,8 @@ int one_wire_search()
     return search_result;
 }
 
-bool one_wire_match_rom(one_wire_device device) {
+bool one_wire_match_rom(one_wire_device device) 
+{
     int i;
     one_wire_reset_pulse();
     one_wire_write_byte(0x55); // Match ROM command
@@ -304,7 +315,8 @@ int one_wire_next()
     return one_wire_search();
 }
 
-one_wire_device* one_wire_search_rom(uint8_t *devices) {
+one_wire_device* one_wire_search_rom(uint8_t *devices) 
+{
     int result, i;
     one_wire_device_count = 0;
     result = one_wire_first();

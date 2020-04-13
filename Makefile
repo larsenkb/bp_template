@@ -131,7 +131,8 @@ print-%:
 	$(AS) -c $(ASFLAGS) $< -o $@
 
 ctags:
-	ctags *.[chsS] inc/*.[chs] src/*.[chs] 
+	@ctags *.[chs] stm32/*.[chs] onewire/*.[chs] oled/*.[chs] bmp280/*.[chs]
+
 
 clean: 
 	$(RM) $(OBJS) $(OBJS:.o=.d) $(TARGET).elf $(TARGET).bin $(TARGET).map 

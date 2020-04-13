@@ -16,6 +16,7 @@
 #include "xprintf.h"
 #include "utils.h"
 #include "ds18b20.h"
+#include "twi.h"
 
 
 #define ARRAYSIZE 800
@@ -49,7 +50,6 @@ void Ext_Pwr_Off(void)
 //******************************************************************
 void Ext_Pwr_Init(void)
 {
-//    I2C_InitTypeDef  I2C_InitStructure;
     GPIO_InitTypeDef  GPIO_InitStructure;
 
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
@@ -71,6 +71,37 @@ void Ext_Pwr_Init(void)
 
 	GPIO_ResetBits(GPIOB, ONEWIRE_PIN); // Set PB8 to Low level ("0")
 #endif
+}
+
+//******************************************************************
+// I2C
+//******************************************************************
+void I2C1_init(void)
+{
+    I2C_InitTypeDef  I2C_InitStructure;
+    GPIO_InitTypeDef  GPIO_InitStructure;
+
+    RCC_APB1PeriphClockCmd(RCC_APB1Periph_I2C1, ENABLE);
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
+
+    /* Configure I2C_EE pins: SCL and SDA */
+    GPIO_InitStructure.GPIO_Pin =  GPIO_Pin_6 | GPIO_Pin_7;
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_OD;
+    GPIO_Init(GPIOB, &GPIO_InitStructure);
+
+    /* I2C configuration */
+    I2C_InitStructure.I2C_Mode = I2C_Mode_I2C;
+    I2C_InitStructure.I2C_DutyCycle = I2C_DutyCycle_2;
+    I2C_InitStructure.I2C_OwnAddress1 = 0x38;
+    I2C_InitStructure.I2C_Ack = I2C_Ack_Enable;
+    I2C_InitStructure.I2C_AcknowledgedAddress = I2C_AcknowledgedAddress_7bit;
+    I2C_InitStructure.I2C_ClockSpeed = 100000;
+
+    /* I2C Peripheral Enable */
+    I2C_Cmd(I2C1, ENABLE);
+    /* Apply I2C configuration after enabling it */
+    I2C_Init(I2C1, &I2C_InitStructure);
 }
 
 
@@ -98,14 +129,24 @@ int main(void)
 	// Power control to external peripherals
 	Ext_Pwr_Init();
 	Ext_Pwr_On();	// enable power to external peripherals
+	sysTickDelay(100);
 	
     // Initialize USART
     usart_init();
 //    uart1_puts("USART1 initialized.\n\r");
-//	  write(1, "My name is Kent Larsen\n", 23);
+	  write(1, "My name is Kent Larsen\n", 23);
 
 	setup_delay_timer(TIM2);
 	delay_us(TIM2, 100);
+
+
+#if 1
+	// I2C scanner
+//	twiEnable();
+	I2C1_init();
+	printf("Scanning I2C bus...\n");
+	twiScanPretty();
+#endif
 
 #if 0
 	while(1) {
@@ -158,9 +199,12 @@ int main(void)
 	
 	ledOff();
 
+	sysTickDelay(5);
+	ds18b20_init(ONEWIRE_PORT, ONEWIRE_PIN, TIM2);
+
 	while (1) {
-		sysTickDelay(5);
-		ds18b20_init(ONEWIRE_PORT, ONEWIRE_PIN, TIM2);
+//		sysTickDelay(5);
+//		ds18b20_init(ONEWIRE_PORT, ONEWIRE_PIN, TIM2);
 		do {
 			temp = ds18b20_get_temperature_simple();
 		} while (!temp.is_valid);

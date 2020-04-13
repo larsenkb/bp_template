@@ -1,5 +1,6 @@
 #ifndef __ONE_WIRE_H__
 #define __ONE_WIRE_H__
+
 #include <stdbool.h>
 //#include <string.h>
 #include <stdio.h>
@@ -32,4 +33,5 @@ bool one_wire_match_rom(one_wire_device device);
 uint8_t one_wire_get_crc(void);
 uint8_t one_wire_crc(uint8_t data);
 void one_wire_reset_crc(void);
+
 #endif // __ONE_WIRE_H__

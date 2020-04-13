@@ -13,13 +13,18 @@ I can do memory to memory DMA.
 
 There is code to control the built in LED (PC13).
 
+I have oneWire working.
+
+I have I2C bus scan working.
+
 I am using [ChaN](http://elm-chan.org/) xprintf
 
 I started to code base by taking some code from [embedds](https://embedds.com/using-direct-memory-access-dma-in-stm23-projects/) and modifying it for gcc and makefile.
 
 ## Planned additions
 Some of the features I would like to get working in the near future are:
-* Add 'stdin' support
-* Add I2C support
-* Add SPI support
-* Add Serial USB support
+* [ ]Add 'stdin' support
+* [x]Add I2C support
+* [ ]Add SPI support
+* [ ]Add Serial USB support
+* [x] Add OneWire support
