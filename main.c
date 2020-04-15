@@ -17,6 +17,7 @@
 #include "utils.h"
 #include "ds18b20.h"
 #include "twi.h"
+#include "bmp280.h"
 
 
 #define ARRAYSIZE 800
@@ -111,6 +112,8 @@ int main(void)
 	uint32_t val1, val2;
 	simple_float temp;
 	char buff[80];
+	long temperature, ti, tf;
+	unsigned long pressure, pi, pf;
 	
 	// system comes up running HSI at external crystal frequency
 	// which is 8MHz
@@ -139,13 +142,36 @@ int main(void)
 	setup_delay_timer(TIM2);
 	delay_us(TIM2, 100);
 
+	I2C1_init();
 
 #if 1
 	// I2C scanner
 //	twiEnable();
-	I2C1_init();
 	printf("Scanning I2C bus...\n");
 	twiScanPretty();
+#endif
+
+#if 1
+	int id = BMP280_Init();
+	id = id;
+#endif
+#if 1
+	printf("ID:     %2x\n", id); sysTickDelay(2);
+	sprintf(buff, "dig_T1: %6d\r\n", BMP280_Get(0)); uart1_puts(buff); sysTickDelay(2);
+	sprintf(buff, "dig_T2: %6d\r\n", BMP280_Get(1)); uart1_puts(buff); sysTickDelay(2);
+	sprintf(buff, "dig_T3: %6d\r\n", BMP280_Get(2)); uart1_puts(buff); sysTickDelay(2);
+	sprintf(buff, "dig_P1: %6d\r\n", BMP280_Get(3)); uart1_puts(buff); sysTickDelay(2);
+	sprintf(buff, "dig_P2: %6d\r\n", BMP280_Get(4)); uart1_puts(buff); sysTickDelay(2);
+	sprintf(buff, "dig_P3: %6d\r\n", BMP280_Get(5)); uart1_puts(buff); sysTickDelay(2);
+	sprintf(buff, "dig_P4: %6d\r\n", BMP280_Get(6)); uart1_puts(buff); sysTickDelay(2);
+	sprintf(buff, "dig_P5: %6d\r\n", BMP280_Get(7)); uart1_puts(buff); sysTickDelay(2);
+	sprintf(buff, "dig_P6: %6d\r\n", BMP280_Get(8)); uart1_puts(buff); sysTickDelay(2);
+	sprintf(buff, "dig_P7: %6d\r\n", BMP280_Get(9)); uart1_puts(buff); sysTickDelay(2);
+	sprintf(buff, "dig_P8: %6d\r\n", BMP280_Get(10)); uart1_puts(buff); sysTickDelay(2);
+	sprintf(buff, "dig_P9: %6d\r\n", BMP280_Get(11)); uart1_puts(buff); sysTickDelay(2);
+	sprintf(buff, "sizeof(int): %d\r\n", sizeof(int)); uart1_puts(buff); sysTickDelay(2);
+	sprintf(buff, "sizeof(long): %d\r\n", sizeof(long)); uart1_puts(buff); sysTickDelay(2);
+	sprintf(buff, "sizeof(long long): %d\r\n", sizeof(long long)); uart1_puts(buff); sysTickDelay(2);
 #endif
 
 #if 0
@@ -205,6 +231,30 @@ int main(void)
 	while (1) {
 //		sysTickDelay(5);
 //		ds18b20_init(ONEWIRE_PORT, ONEWIRE_PIN, TIM2);
+#if 1
+		if (1) { //(FLAG_USART == 1) {
+			bmp280Convert(&temperature, &pressure);
+			ti = temperature/100;
+			tf = temperature - ti*100;
+			pi = pressure/256;
+			pf = pressure - pi*256;
+			pf *= 1000;
+			pf /= 256;
+			pf += 5;
+			pf /= 10;
+			//pressure /= 1013.25;
+
+			sprintf(buff, "%d.%02d'C\n", (int)ti, (int)tf);
+			uart1_puts(buff); //oledWriteString(0, 3, buff, FONT_NORMAL);
+//			sprintf(buff, "%d.%02d Pa\n", (int)pi, (int)pf);
+//			uart1_puts(buff); //oledWriteString(0, 5, buff, FONT_NORMAL);
+//			sprintf(buff, "Temperature: %d.%02d, Pressure: %d.%02d\n", (int)ti, (int)tf, (int)pi, (int)pf);
+
+			//USARTSendDMA(buff);
+//    		uart1_puts(buff);
+//			FLAG_USART = 0;
+    	}
+#endif
 		do {
 			temp = ds18b20_get_temperature_simple();
 		} while (!temp.is_valid);

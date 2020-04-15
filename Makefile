@@ -10,6 +10,7 @@ A_SRCS = $(wildcard *.s)
 
 C_SRCS  = $(wildcard *.c)
 C_SRCS += $(wildcard onewire/*.c)
+C_SRCS += $(wildcard bmp280/*.c)
 
 OBJS	 = $(A_SRCS:.s=.o)
 OBJS	+= $(C_SRCS:.c=.o)
@@ -53,7 +54,7 @@ LDSCRIPT	?= bluepill.ld
 
 CSTD	?= -std=c99
 
-C_INCLUDES	= -I. -Istm32 -Ionewire
+C_INCLUDES	= -I. -Istm32 -Ionewire -Ibmp280
 
 C_DEFS		+= -DSTM32F1
 C_DEFS		+= -DSTM32F103C8Tx
