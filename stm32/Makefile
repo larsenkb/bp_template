@@ -1,4 +1,3 @@
-#BINARY		= main
 TARGET		= main
 
 # debug build?

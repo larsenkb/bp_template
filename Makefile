@@ -151,9 +151,15 @@ flashit: $(TARGET).bin
 #	openocd -f target/bluepillst.cfg -c init -c "reset halt" -c "flash write_image erase $(TARGET).bin 0x8000000" -c "verify_image $(TARGET).bin" -c reset -c shutdown
 #openocd -f openocd.cfg -c "program $(TARGET).elf verify reset" -c shutdown
 
+# Define a helper macro for debugging make errors online
+# you can type "make print-OPENCM3_DIR" and it will show you
+# how that ended up being resolved by all of the included
+# makefiles.
+print-%:
+	@echo $*=$($*)
 
-.PHONY: libfoo flashit flash
-libfoo:
+.PHONY: libbp flashit flash
+libbp:
 	$(MAKE) -C stm32
 
 .PHONY: images clean elf bin hex srec list all ctags
