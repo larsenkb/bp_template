@@ -11,6 +11,8 @@ A_SRCS = $(wildcard *.s)
 C_SRCS  = $(wildcard *.c)
 C_SRCS += $(wildcard onewire/*.c)
 C_SRCS += $(wildcard bmp280/*.c)
+C_SRCS += $(wildcard usb_lib/src/*.c)
+#C_SRCS += kent_spi.c
 
 OBJS	 = $(A_SRCS:.s=.o)
 OBJS	+= $(C_SRCS:.c=.o)
@@ -50,11 +52,12 @@ OBJDUMP	:= $(PREFIX)objdump
 GDB		:= $(PREFIX)gdb
 STFLASH = $(shell which st-flash)
 
-LDSCRIPT	?= bluepill.ld
+#LDSCRIPT	?= bluepill.ld
+LDSCRIPT	?= STM32F10X_MD_flash.ld
 
 CSTD	?= -std=c99
 
-C_INCLUDES	= -I. -Istm32 -Ionewire -Ibmp280
+C_INCLUDES	= -I. -Istm32 -Ionewire -Ibmp280 -Iusb_lib/inc
 
 C_DEFS		+= -DSTM32F1
 C_DEFS		+= -DSTM32F103C8Tx
@@ -63,6 +66,7 @@ C_DEFS		+= -DUSE_STDPERIPH_DRIVER
 C_DEFS		+= -DDEBUG
 C_DEFS		+= -DSTM32F10X_MD
 C_DEFS		+= -D__CM3_REV=0x0500
+#C_DEFS		+= -DVECT_TAB_RAM
 
 
 CFLAGS		= $(MCU) $(C_DEFS) $(C_INCLUDES) $(OPT) -Wall -fdata-sections -ffunction-sections
