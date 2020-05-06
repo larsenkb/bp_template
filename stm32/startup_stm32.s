@@ -1,3 +1,4 @@
+#if 0
 /**
   ******************************************************************************
   * @file      startup_stm32.s dedicated to STM32F103C8Tx device
@@ -405,3 +406,4 @@ g_pfnVectors:
 	.weak	SystemInit
 
 /************************ (C) COPYRIGHT Ac6 *****END OF FILE****/
+#endif

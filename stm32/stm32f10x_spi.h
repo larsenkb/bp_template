@@ -31,21 +31,6 @@
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f10x.h"
 
-/** @addtogroup STM32F10x_StdPeriph_Driver
-  * @{
-  */
-
-/** @addtogroup SPI
-  * @{
-  */ 
-
-/** @defgroup SPI_Exported_Types
-  * @{
-  */
-
-/** 
-  * @brief  SPI Init structure definition  
-  */
 
 typedef struct
 {
@@ -106,13 +91,7 @@ typedef struct
                                   This parameter can be a value of @ref I2S_Clock_Polarity */
 }I2S_InitTypeDef;
 
-/**
-  * @}
-  */
 
-/** @defgroup SPI_Exported_Constants
-  * @{
-  */
 
 #define IS_SPI_ALL_PERIPH(PERIPH) (((PERIPH) == SPI1) || \
                                    ((PERIPH) == SPI2) || \
@@ -121,9 +100,6 @@ typedef struct
 #define IS_SPI_23_PERIPH(PERIPH) (((PERIPH) == SPI2) || \
                                   ((PERIPH) == SPI3))
 
-/** @defgroup SPI_data_direction 
-  * @{
-  */
   
 #define SPI_Direction_2Lines_FullDuplex ((uint16_t)0x0000)
 #define SPI_Direction_2Lines_RxOnly     ((uint16_t)0x0400)
@@ -133,73 +109,31 @@ typedef struct
                                      ((MODE) == SPI_Direction_2Lines_RxOnly) || \
                                      ((MODE) == SPI_Direction_1Line_Rx) || \
                                      ((MODE) == SPI_Direction_1Line_Tx))
-/**
-  * @}
-  */
-
-/** @defgroup SPI_mode 
-  * @{
-  */
 
 #define SPI_Mode_Master                 ((uint16_t)0x0104)
 #define SPI_Mode_Slave                  ((uint16_t)0x0000)
 #define IS_SPI_MODE(MODE) (((MODE) == SPI_Mode_Master) || \
                            ((MODE) == SPI_Mode_Slave))
-/**
-  * @}
-  */
-
-/** @defgroup SPI_data_size 
-  * @{
-  */
 
 #define SPI_DataSize_16b                ((uint16_t)0x0800)
 #define SPI_DataSize_8b                 ((uint16_t)0x0000)
 #define IS_SPI_DATASIZE(DATASIZE) (((DATASIZE) == SPI_DataSize_16b) || \
                                    ((DATASIZE) == SPI_DataSize_8b))
-/**
-  * @}
-  */ 
-
-/** @defgroup SPI_Clock_Polarity 
-  * @{
-  */
 
 #define SPI_CPOL_Low                    ((uint16_t)0x0000)
 #define SPI_CPOL_High                   ((uint16_t)0x0002)
 #define IS_SPI_CPOL(CPOL) (((CPOL) == SPI_CPOL_Low) || \
                            ((CPOL) == SPI_CPOL_High))
-/**
-  * @}
-  */
-
-/** @defgroup SPI_Clock_Phase 
-  * @{
-  */
 
 #define SPI_CPHA_1Edge                  ((uint16_t)0x0000)
 #define SPI_CPHA_2Edge                  ((uint16_t)0x0001)
 #define IS_SPI_CPHA(CPHA) (((CPHA) == SPI_CPHA_1Edge) || \
                            ((CPHA) == SPI_CPHA_2Edge))
-/**
-  * @}
-  */
-
-/** @defgroup SPI_Slave_Select_management 
-  * @{
-  */
 
 #define SPI_NSS_Soft                    ((uint16_t)0x0200)
 #define SPI_NSS_Hard                    ((uint16_t)0x0000)
 #define IS_SPI_NSS(NSS) (((NSS) == SPI_NSS_Soft) || \
                          ((NSS) == SPI_NSS_Hard))
-/**
-  * @}
-  */ 
-
-/** @defgroup SPI_BaudRate_Prescaler 
-  * @{
-  */
 
 #define SPI_BaudRatePrescaler_2         ((uint16_t)0x0000)
 #define SPI_BaudRatePrescaler_4         ((uint16_t)0x0008)
@@ -217,25 +151,11 @@ typedef struct
                                               ((PRESCALER) == SPI_BaudRatePrescaler_64) || \
                                               ((PRESCALER) == SPI_BaudRatePrescaler_128) || \
                                               ((PRESCALER) == SPI_BaudRatePrescaler_256))
-/**
-  * @}
-  */ 
-
-/** @defgroup SPI_MSB_LSB_transmission 
-  * @{
-  */
 
 #define SPI_FirstBit_MSB                ((uint16_t)0x0000)
 #define SPI_FirstBit_LSB                ((uint16_t)0x0080)
 #define IS_SPI_FIRST_BIT(BIT) (((BIT) == SPI_FirstBit_MSB) || \
                                ((BIT) == SPI_FirstBit_LSB))
-/**
-  * @}
-  */
-
-/** @defgroup I2S_Mode 
-  * @{
-  */
 
 #define I2S_Mode_SlaveTx                ((uint16_t)0x0000)
 #define I2S_Mode_SlaveRx                ((uint16_t)0x0100)
@@ -245,13 +165,6 @@ typedef struct
                            ((MODE) == I2S_Mode_SlaveRx) || \
                            ((MODE) == I2S_Mode_MasterTx) || \
                            ((MODE) == I2S_Mode_MasterRx) )
-/**
-  * @}
-  */
-
-/** @defgroup I2S_Standard 
-  * @{
-  */
 
 #define I2S_Standard_Phillips           ((uint16_t)0x0000)
 #define I2S_Standard_MSB                ((uint16_t)0x0010)
@@ -263,13 +176,6 @@ typedef struct
                                    ((STANDARD) == I2S_Standard_LSB) || \
                                    ((STANDARD) == I2S_Standard_PCMShort) || \
                                    ((STANDARD) == I2S_Standard_PCMLong))
-/**
-  * @}
-  */
-
-/** @defgroup I2S_Data_Format 
-  * @{
-  */
 
 #define I2S_DataFormat_16b              ((uint16_t)0x0000)
 #define I2S_DataFormat_16bextended      ((uint16_t)0x0001)
@@ -279,25 +185,11 @@ typedef struct
                                     ((FORMAT) == I2S_DataFormat_16bextended) || \
                                     ((FORMAT) == I2S_DataFormat_24b) || \
                                     ((FORMAT) == I2S_DataFormat_32b))
-/**
-  * @}
-  */ 
-
-/** @defgroup I2S_MCLK_Output 
-  * @{
-  */
 
 #define I2S_MCLKOutput_Enable           ((uint16_t)0x0200)
 #define I2S_MCLKOutput_Disable          ((uint16_t)0x0000)
 #define IS_I2S_MCLK_OUTPUT(OUTPUT) (((OUTPUT) == I2S_MCLKOutput_Enable) || \
                                     ((OUTPUT) == I2S_MCLKOutput_Disable))
-/**
-  * @}
-  */
-
-/** @defgroup I2S_Audio_Frequency 
-  * @{
-  */
 
 #define I2S_AudioFreq_192k               ((uint32_t)192000)
 #define I2S_AudioFreq_96k                ((uint32_t)96000)
@@ -313,71 +205,29 @@ typedef struct
 #define IS_I2S_AUDIO_FREQ(FREQ) ((((FREQ) >= I2S_AudioFreq_8k) && \
                                   ((FREQ) <= I2S_AudioFreq_192k)) || \
                                  ((FREQ) == I2S_AudioFreq_Default))
-/**
-  * @}
-  */ 
-
-/** @defgroup I2S_Clock_Polarity 
-  * @{
-  */
 
 #define I2S_CPOL_Low                    ((uint16_t)0x0000)
 #define I2S_CPOL_High                   ((uint16_t)0x0008)
 #define IS_I2S_CPOL(CPOL) (((CPOL) == I2S_CPOL_Low) || \
                            ((CPOL) == I2S_CPOL_High))
-/**
-  * @}
-  */
-
-/** @defgroup SPI_I2S_DMA_transfer_requests 
-  * @{
-  */
 
 #define SPI_I2S_DMAReq_Tx               ((uint16_t)0x0002)
 #define SPI_I2S_DMAReq_Rx               ((uint16_t)0x0001)
 #define IS_SPI_I2S_DMAREQ(DMAREQ) ((((DMAREQ) & (uint16_t)0xFFFC) == 0x00) && ((DMAREQ) != 0x00))
-/**
-  * @}
-  */
-
-/** @defgroup SPI_NSS_internal_software_management 
-  * @{
-  */
 
 #define SPI_NSSInternalSoft_Set         ((uint16_t)0x0100)
 #define SPI_NSSInternalSoft_Reset       ((uint16_t)0xFEFF)
 #define IS_SPI_NSS_INTERNAL(INTERNAL) (((INTERNAL) == SPI_NSSInternalSoft_Set) || \
                                        ((INTERNAL) == SPI_NSSInternalSoft_Reset))
-/**
-  * @}
-  */
-
-/** @defgroup SPI_CRC_Transmit_Receive 
-  * @{
-  */
 
 #define SPI_CRC_Tx                      ((uint8_t)0x00)
 #define SPI_CRC_Rx                      ((uint8_t)0x01)
 #define IS_SPI_CRC(CRC) (((CRC) == SPI_CRC_Tx) || ((CRC) == SPI_CRC_Rx))
-/**
-  * @}
-  */
-
-/** @defgroup SPI_direction_transmit_receive 
-  * @{
-  */
 
 #define SPI_Direction_Rx                ((uint16_t)0xBFFF)
 #define SPI_Direction_Tx                ((uint16_t)0x4000)
 #define IS_SPI_DIRECTION(DIRECTION) (((DIRECTION) == SPI_Direction_Rx) || \
                                      ((DIRECTION) == SPI_Direction_Tx))
-/**
-  * @}
-  */
-
-/** @defgroup SPI_I2S_interrupts_definition 
-  * @{
-  */
 
 #define SPI_I2S_IT_TXE                  ((uint8_t)0x71)
 #define SPI_I2S_IT_RXNE                 ((uint8_t)0x60)
@@ -393,13 +243,6 @@ typedef struct
 #define IS_SPI_I2S_GET_IT(IT) (((IT) == SPI_I2S_IT_RXNE) || ((IT) == SPI_I2S_IT_TXE) || \
                                ((IT) == I2S_IT_UDR) || ((IT) == SPI_IT_CRCERR) || \
                                ((IT) == SPI_IT_MODF) || ((IT) == SPI_I2S_IT_OVR))
-/**
-  * @}
-  */
-
-/** @defgroup SPI_I2S_flags_definition 
-  * @{
-  */
 
 #define SPI_I2S_FLAG_RXNE               ((uint16_t)0x0001)
 #define SPI_I2S_FLAG_TXE                ((uint16_t)0x0002)
@@ -414,34 +257,8 @@ typedef struct
                                    ((FLAG) == SPI_FLAG_MODF) || ((FLAG) == SPI_FLAG_CRCERR) || \
                                    ((FLAG) == I2S_FLAG_UDR) || ((FLAG) == I2S_FLAG_CHSIDE) || \
                                    ((FLAG) == SPI_I2S_FLAG_TXE) || ((FLAG) == SPI_I2S_FLAG_RXNE))
-/**
-  * @}
-  */
-
-/** @defgroup SPI_CRC_polynomial 
-  * @{
-  */
 
 #define IS_SPI_CRC_POLYNOMIAL(POLYNOMIAL) ((POLYNOMIAL) >= 0x1)
-/**
-  * @}
-  */
-
-/**
-  * @}
-  */
-
-/** @defgroup SPI_Exported_Macros
-  * @{
-  */
-
-/**
-  * @}
-  */
-
-/** @defgroup SPI_Exported_Functions
-  * @{
-  */
 
 void SPI_I2S_DeInit(SPI_TypeDef* SPIx);
 void SPI_Init(SPI_TypeDef* SPIx, SPI_InitTypeDef* SPI_InitStruct);
@@ -472,16 +289,4 @@ void SPI_I2S_ClearITPendingBit(SPI_TypeDef* SPIx, uint8_t SPI_I2S_IT);
 #endif
 
 #endif /*__STM32F10x_SPI_H */
-/**
-  * @}
-  */
-
-/**
-  * @}
-  */
-
-/**
-  * @}
-  */
-
 /******************* (C) COPYRIGHT 2011 STMicroelectronics *****END OF FILE****/

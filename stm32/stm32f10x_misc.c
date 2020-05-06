@@ -1,6 +1,6 @@
 /**
   ******************************************************************************
-  * @file    misc.c
+  * @file    stm32f10x_misc.c
   * @author  MCD Application Team
   * @version V3.5.0
   * @date    11-March-2011
@@ -23,59 +23,9 @@
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f10x_misc.h"
 
-/** @addtogroup STM32F10x_StdPeriph_Driver
-  * @{
-  */
 
-/** @defgroup MISC 
-  * @brief MISC driver modules
-  * @{
-  */
-
-/** @defgroup MISC_Private_TypesDefinitions
-  * @{
-  */
-
-/**
-  * @}
-  */ 
-
-/** @defgroup MISC_Private_Defines
-  * @{
-  */
 
 #define AIRCR_VECTKEY_MASK    ((uint32_t)0x05FA0000)
-/**
-  * @}
-  */
-
-/** @defgroup MISC_Private_Macros
-  * @{
-  */
-
-/**
-  * @}
-  */
-
-/** @defgroup MISC_Private_Variables
-  * @{
-  */
-
-/**
-  * @}
-  */
-
-/** @defgroup MISC_Private_FunctionPrototypes
-  * @{
-  */
-
-/**
-  * @}
-  */
-
-/** @defgroup MISC_Private_Functions
-  * @{
-  */
 
 /**
   * @brief  Configures the priority grouping: pre-emption priority and subpriority.
@@ -118,8 +68,7 @@ void NVIC_Init(NVIC_InitTypeDef* NVIC_InitStruct)
   assert_param(IS_NVIC_PREEMPTION_PRIORITY(NVIC_InitStruct->NVIC_IRQChannelPreemptionPriority));  
   assert_param(IS_NVIC_SUB_PRIORITY(NVIC_InitStruct->NVIC_IRQChannelSubPriority));
     
-  if (NVIC_InitStruct->NVIC_IRQChannelCmd != DISABLE)
-  {
+  if (NVIC_InitStruct->NVIC_IRQChannelCmd != DISABLE) {
     /* Compute the Corresponding IRQ Priority --------------------------------*/    
     tmppriority = (0x700 - ((SCB->AIRCR) & (uint32_t)0x700))>> 0x08;
     tmppre = (0x4 - tmppriority);
@@ -134,9 +83,7 @@ void NVIC_Init(NVIC_InitTypeDef* NVIC_InitStruct)
     /* Enable the Selected IRQ Channels --------------------------------------*/
     NVIC->ISER[NVIC_InitStruct->NVIC_IRQChannel >> 0x05] =
       (uint32_t)0x01 << (NVIC_InitStruct->NVIC_IRQChannel & (uint8_t)0x1F);
-  }
-  else
-  {
+  } else {
     /* Disable the Selected IRQ Channels -------------------------------------*/
     NVIC->ICER[NVIC_InitStruct->NVIC_IRQChannel >> 0x05] =
       (uint32_t)0x01 << (NVIC_InitStruct->NVIC_IRQChannel & (uint8_t)0x1F);
@@ -178,12 +125,9 @@ void NVIC_SystemLPConfig(uint8_t LowPowerMode, FunctionalState NewState)
   assert_param(IS_NVIC_LP(LowPowerMode));
   assert_param(IS_FUNCTIONAL_STATE(NewState));  
   
-  if (NewState != DISABLE)
-  {
+  if (NewState != DISABLE) {
     SCB->SCR |= LowPowerMode;
-  }
-  else
-  {
+  } else {
     SCB->SCR &= (uint32_t)(~(uint32_t)LowPowerMode);
   }
 }
@@ -200,26 +144,13 @@ void SysTick_CLKSourceConfig(uint32_t SysTick_CLKSource)
 {
   /* Check the parameters */
   assert_param(IS_SYSTICK_CLK_SOURCE(SysTick_CLKSource));
-  if (SysTick_CLKSource == SysTick_CLKSource_HCLK)
-  {
-    SysTick->CTRL |= SysTick_CLKSource_HCLK;
-  }
-  else
-  {
+  if (SysTick_CLKSource == SysTick_CLKSource_HCLK) {
+    SysTick->CTRL |= SysTick_CLKSource_HCLK; 
+  } else {
     SysTick->CTRL &= SysTick_CLKSource_HCLK_Div8;
   }
 }
 
-/**
-  * @}
-  */
 
-/**
-  * @}
-  */
-
-/**
-  * @}
-  */
 
 /******************* (C) COPYRIGHT 2011 STMicroelectronics *****END OF FILE****/
