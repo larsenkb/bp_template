@@ -12,9 +12,7 @@
 
 #include "utils.h"
 
-typedef enum {
-	ONE_WIRE_SLAVE_PRESENT, ONE_WIRE_ERROR
-} one_wire_state;
+typedef enum { ONE_WIRE_SLAVE_PRESENT, ONE_WIRE_ERROR } one_wire_state;
 
 typedef struct {
 	uint8_t address[8];

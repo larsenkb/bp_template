@@ -1,11 +1,9 @@
 #ifndef __DS18B20_H__
 #define __DS18B20_H__
 
-//#include <math.h>
 #include <stdlib.h>
 #include <stdbool.h>
 #include <stdint.h>
-
 #include "one_wire.h"
 
 // Structure in which temperature is stored
