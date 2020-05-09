@@ -63,10 +63,14 @@ extern uint32_t _isr_vectorsflash_offs;
 static void Ext_Pwr_On(void);
 static void Ext_Pwr_Off(void);
 static void Ext_Pwr_Init(void);
-static void RCC_Configuration(void);
+#if EN_I2C
 static void I2C1_init(void);
+static void RCC_Configuration(void);
 static void NVIC_Configuration(void);
-
+#endif
+#if EN_BMP280
+static void printBmp280(void);
+#endif
 
 //******************************************************************
 // main
@@ -75,7 +79,7 @@ int main(void)
 {
 //	register int i;
 //	uint32_t val1, val2;
-	char buff[80];
+	char buff[80] __attribute__((unused));
 	
 	// system comes up running HSI at internal RC frequency of 8MHz
 
@@ -150,6 +154,19 @@ int main(void)
 //	  write(1, "My name is Kent Larsen\n", 23);
 #endif
 
+#if 0
+	char *tbuff = (char*)NULL;
+	printf("tbuff: %08x\n", (unsigned int)tbuff);
+	tbuff = (char *)malloc(80);
+	printf("tbuff: %08x\n", (unsigned int)tbuff);
+	tbuff = (char *)malloc(80);
+	printf("tbuff: %08x\n", (unsigned int)tbuff);
+	tbuff = (char *)malloc(80);
+	printf("tbuff: %08x\n", (unsigned int)tbuff);
+	tbuff = (char *)malloc(80);
+	printf("tbuff: %08x\n", (unsigned int)tbuff);
+#endif
+	
 #if EN_I2C
 	I2C1_init();
 #endif
@@ -174,7 +191,10 @@ int main(void)
 #endif
 
 #if EN_WS2812
-	wsInit();
+	int rv = wsInit(16, 0, 0);	// wsInit(#leds, rgbw==1, double_buffered==1)
+	if (rv < 0)
+    	uart1_puts("FAILED to Init WS2812b driver.\n\r");
+		
 	wsClear();
 	wsShow();
 	sysTickDelay(200);
@@ -259,27 +279,7 @@ int main(void)
 	while (1) {
 
 #if EN_BMP280
-		long temperature, ti, tf;
-		unsigned long pressure, pi, pf;
-			
-		bmp280Convert(&temperature, &pressure);
-		ti = temperature/100;
-		tf = temperature - ti*100;
-		pi = pressure/256;
-		pf = pressure - pi*256;
-		pf *= 1000;
-		pf /= 256;
-		pf += 5;
-		pf /= 10;
-		//pressure /= 1013.25;
-
-#if EN_OLED
-		sprintf(buff, "%d.%02d'C", (int)ti, (int)tf);
-		oledWriteString(0, 3, buff, FONT_NORMAL);
-		sprintf(buff, "%d.%02d Pa", (int)pi, (int)pf);
-		oledWriteString(0, 5, buff, FONT_NORMAL);
-#endif
-		printf("bmp280:  %d.%02d'C,  %d.%02d hPa\n", (int)ti, (int)tf, (int)pi, (int)pf);
+		printBmp280();
 #endif
 
 #if EN_DS18B20
@@ -426,6 +426,7 @@ static void Ext_Pwr_Init(void)
 
 }
 
+#if EN_USB
 static void RCC_Configuration(void)
 {
     SystemInit();
@@ -443,10 +444,12 @@ static void RCC_Configuration(void)
     // RTC clock enable
     RCC_APB1PeriphClockCmd(RCC_APB1Periph_PWR | RCC_APB1Periph_BKP, ENABLE);
 }
+#endif
 
 //******************************************************************
 // I2C
 //******************************************************************
+#if EN_I2C
 static void I2C1_init(void)
 {
     I2C_InitTypeDef  I2C_InitStructure;
@@ -474,8 +477,9 @@ static void I2C1_init(void)
     /* Apply I2C configuration after enabling it */
     I2C_Init(I2C1, &I2C_InitStructure);
 }
+#endif
 
-#if 1
+#if EN_USB
 static void NVIC_Configuration(void)
 {
     /* Set the Vector Table base location at 0x08000000+_isr_vectorsflash_offs */
@@ -483,6 +487,33 @@ static void NVIC_Configuration(void)
 }
 #endif
 
+#if EN_BMP280
+static void printBmp280(void)
+{
+	long temperature, ti, tf;
+	unsigned long pressure, pi, pf;
+	char buff[80];
+		
+	bmp280Convert(&temperature, &pressure);
+	ti = temperature/100;
+	tf = temperature - ti*100;
+	pi = pressure/256;
+	pf = pressure - pi*256;
+	pf *= 1000;
+	pf /= 256;
+	pf += 5;
+	pf /= 10;
+	//pressure /= 1013.25;
+
+#if EN_OLED
+	sprintf(buff, "%d.%02d'C", (int)ti, (int)tf);
+	oledWriteString(0, 3, buff, FONT_NORMAL);
+	sprintf(buff, "%d.%02d Pa", (int)pi, (int)pf);
+	oledWriteString(0, 5, buff, FONT_NORMAL);
+#endif
+	printf("bmp280:  %d.%02d'C,  %d.%02d hPa\n", (int)ti, (int)tf, (int)pi, (int)pf);
+}
+#endif
 
 
 

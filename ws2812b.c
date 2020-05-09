@@ -29,41 +29,45 @@
 #include "systickdelay.h"
 
 
-#define NUM_LEDS		16
+static uint8_t *pixels[2];
+static int pIdx;
 
-#define RGBW			0
-
-#if RGBW == 1
-#define BYTES_PER_PIXEL	12
-#else
-#define BYTES_PER_PIXEL	9
-#endif
-
-//static uint8_t *encoderLookup;
-static uint8_t		pixels[2][NUM_LEDS * BYTES_PER_PIXEL + 1];
-static int pIdx = 0;
-
-//static bool		begun = false;         // true if begin() previously called
 static uint16_t	numLEDs;       // Number of RGB LEDs in strip
 static uint16_t	numBytes;      // Size of 'pixels' buffer
 
 extern uint8_t encoderLookup[];
 
 static bool wsDmaInProgress;
-
+static bool dblBuf;
+static int bytesPerPixel;
 
 static void wsSpiStartXfer(uint8_t *buff, uint16_t size);
 static void wsSpiInit(void);
 
-void wsInit(void)
+int wsInit(int nleds, int rgbw, int dbl)
 {
+	int rv = 0;
+	
+	dblBuf = (dbl == 1);
+	numLEDs = nleds;
+	bytesPerPixel = (rgbw == 0)? 9 : 12;
+	numBytes = nleds * bytesPerPixel;
+	pixels[0] = (uint8_t *)malloc(numLEDs * bytesPerPixel + 1);
+	if (pixels[0] == (uint8_t*)NULL)
+		rv = -1;
+	if (dblBuf) {
+		pixels[1] = (uint8_t *)malloc(numLEDs * bytesPerPixel + 1);
+		if (pixels[1] == (uint8_t*)NULL)
+			rv = -1;
+	}
+	
 	wsSpiInit();
 	pIdx = 0;
 	wsDmaInProgress = false;
-	numLEDs = NUM_LEDS;
-	numBytes = NUM_LEDS * BYTES_PER_PIXEL;
+//	numLEDs = NUM_LEDS;
 //    begun = true;
 //	pixels = doubleBuffer; // + 1;
+	return rv;
 }
 
 int getNumPixels(void)
@@ -76,14 +80,16 @@ void wsShow(void)
 {
 	extern void spiDmaTest(uint8_t *buf, uint16_t size);
 	wsSpiStartXfer(pixels[pIdx], numBytes + 1);  // Start DMA xfer and return immediately.
-  	memcpy(pixels[pIdx^1], pixels[pIdx], numBytes + 1);// copy first buffer to second buffer
-	pIdx ^= 1;
+  	if (dblBuf) {
+  		memcpy(pixels[pIdx^1], pixels[pIdx], numBytes + 1);// copy first buffer to second buffer
+		pIdx ^= 1;
+	}
 }
 
 
 void wsSetPixelColor_rgb(uint16_t n, uint8_t r, uint8_t g, uint8_t b)
 {
-   uint8_t *bptr = &pixels[pIdx][n * BYTES_PER_PIXEL];
+   uint8_t *bptr = &pixels[pIdx][n * bytesPerPixel];
    uint8_t *tPtr = &encoderLookup[g * 3]; // + g*2 + g;// need to index 3 x g into the lookup
    
    *bptr++ = *tPtr++;
@@ -103,7 +109,7 @@ void wsSetPixelColor_rgb(uint16_t n, uint8_t r, uint8_t g, uint8_t b)
 
 void wsSetPixelColor_rgbw(uint16_t n, uint8_t r, uint8_t g, uint8_t b, uint8_t w)
 {
-   uint8_t *bptr = &pixels[pIdx][n * BYTES_PER_PIXEL];
+   uint8_t *bptr = &pixels[pIdx][n * bytesPerPixel];
    uint8_t *tPtr = &encoderLookup[g * 3]; // + g*2 + g;// need to index 3 x g into the lookup
    
    *bptr++ = *tPtr++;
@@ -146,7 +152,7 @@ void wsSetPixelColor_c(uint16_t n, uint32_t c)
 	w = (uint16_t)((c >> 24) & 0xff);	
 #endif
 	
-   uint8_t *bptr = &pixels[pIdx][n * BYTES_PER_PIXEL];
+   uint8_t *bptr = &pixels[pIdx][n * bytesPerPixel];
 
    uint8_t *tPtr = &encoderLookup[g * 3]; // + g*2 + g;// need to index 3 x g into the lookup
    *bptr++ = *tPtr++;

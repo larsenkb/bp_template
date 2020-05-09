@@ -23,6 +23,9 @@
 #include <stm32f10x_gpio.h>
 #include <stm32f10x_dma.h>
 #include <stm32f10x_spi.h>
+#include <stdlib.h>
+#include <stddef.h>
+#include <stdio.h>
 #include <stdbool.h>
 #include <sys/types.h>
 #include <string.h>
@@ -35,7 +38,7 @@
 #define SPI_PIN_SCK   GPIO_Pin_5
 
 
-extern void wsInit(void);
+extern int wsInit(int nleds, int rgbw, int dbl);
 extern int getNumPixels(void);
 
 extern void wsShow(void);
