@@ -8,10 +8,11 @@ OPT		= -Og
 # Add inputs and outputs from these tool invocations to the build variables 
 A_SRCS = $(wildcard *.s)
 
-C_SRCS  = $(wildcard *.c)
+C_SRCS  = main.c system_stm32f10x.c led.c systickdelay.c usart1.c utils.c xprintf.c ws2812b.c
+C_SRCS += $(wildcard oled/*.c)
 C_SRCS += $(wildcard onewire/*.c)
-C_SRCS += $(wildcard bmp280/*.c)
-C_SRCS += $(wildcard usb_lib/src/*.c)
+C_SRCS += bmp280/bmp280.c
+#C_SRCS += $(wildcard usb_lib/src/*.c)
 #C_SRCS += kent_spi.c
 
 OBJS	 = $(A_SRCS:.s=.o)
@@ -52,12 +53,12 @@ OBJDUMP	:= $(PREFIX)objdump
 GDB		:= $(PREFIX)gdb
 STFLASH = $(shell which st-flash)
 
-#LDSCRIPT	?= bluepill.ld
-LDSCRIPT	?= STM32F10X_MD_flash.ld
+LDSCRIPT	?= bluepill.ld
+#LDSCRIPT	?= STM32F10X_MD_flash.ld
 
 CSTD	?= -std=c99
 
-C_INCLUDES	= -I. -Istm32 -Ionewire -Ibmp280 -Iusb_lib/inc
+C_INCLUDES	= -I. -Istm32 -Ioled -Ionewire -Ibmp280 -Iusb_lib/inc
 
 C_DEFS		+= -DSTM32F1
 C_DEFS		+= -DSTM32F103C8Tx
@@ -80,6 +81,7 @@ bplib = libbp
 LDLIBS		+= -specs=nano.specs
 #LDLIBS		+= -Wl,--start-group -lc -lgcc -lnosys -Wl,--end-group
 LDLIBS		+= -Wl,--start-group -Lstm32 -lbp -lc -lm -lnosys -Wl,--end-group
+#LDLIBS		+= -Wl,--start-group -lc -lm -lnosys -Wl,--end-group
 #LDLIBS		+= $(alib) -lc -lm -lnosys
 
 LDFLAGS	+= --static -nostartfiles

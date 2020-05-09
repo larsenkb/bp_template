@@ -21,6 +21,9 @@ SECTIONS
   /* The startup code goes first into FLASH */
   .isr_vector :
   {
+    . = ALIGN(0x80); /* PM0056, Rev.1 (4/2009), 4.3.3 */
+    _isr_vectorsflash_offs = . - 0x08000000;
+    KEEP(*(.isr_vectorsflash))
     . = ALIGN(4);
     KEEP(*(.isr_vector)) /* Startup code */
     . = ALIGN(4);
