@@ -2,6 +2,7 @@ tags
 main.bin
 main.elf
 main.map
+*.orig
 *.o
 stm32/*.o
 stm32/*.d
