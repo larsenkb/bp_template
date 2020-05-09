@@ -18,6 +18,7 @@
 #include <stdarg.h>
 void (*xfunc_out)(unsigned char);	/* Pointer to the output stream */
 static char *outptr;
+extern void __io_putchar(char c);
 
 /*----------------------------------------------*/
 /* Put a character                              */
@@ -31,8 +32,8 @@ void xputc (char c)
 		*outptr++ = (unsigned char)c;
 		return;
 	}
-	__builtin_putchar(c);
-//	__io_putchar(c);
+//	__builtin_putchar(c);
+	__io_putchar(c);
 //	if (xfunc_out) xfunc_out((unsigned char)c);
 }
 
