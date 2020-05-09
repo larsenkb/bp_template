@@ -38,7 +38,9 @@ static uint16_t	numBytes;      // Size of 'pixels' buffer
 extern uint8_t encoderLookup[];
 
 static bool wsDmaInProgress;
-static bool dblBuf;
+static bool isDblBuf;
+static bool isRgbw;
+static int pixOffset;
 static int bytesPerPixel;
 
 static void wsSpiStartXfer(uint8_t *buff, uint16_t size);
@@ -48,19 +50,20 @@ int wsInit(int nleds, int rgbw, int dbl)
 {
 	int rv = 0;
 	
-	dblBuf = (dbl == 1);
+	isDblBuf = (dbl == 1);
+	isRgbw = (rgbw == 1);
 	numLEDs = nleds;
-	bytesPerPixel = (rgbw == 0)? 9 : 12;
+	bytesPerPixel = (isRgbw == 0)? 9 : 12;
 	numBytes = nleds * bytesPerPixel;
-	pixels[0] = (uint8_t *)malloc(numLEDs * bytesPerPixel + 1);
+	pixels[0] = (uint8_t *)malloc(numLEDs * bytesPerPixel + 2);
 	if (pixels[0] == (uint8_t*)NULL)
 		rv = -1;
-	if (dblBuf) {
-		pixels[1] = (uint8_t *)malloc(numLEDs * bytesPerPixel + 1);
+	if (isDblBuf) {
+		pixels[1] = (uint8_t *)malloc(numLEDs * bytesPerPixel + 2);
 		if (pixels[1] == (uint8_t*)NULL)
 			rv = -1;
 	}
-	
+	pixOffset = 1;
 	wsSpiInit();
 	pIdx = 0;
 	wsDmaInProgress = false;
@@ -80,7 +83,7 @@ void wsShow(void)
 {
 	extern void spiDmaTest(uint8_t *buf, uint16_t size);
 	wsSpiStartXfer(pixels[pIdx], numBytes + 1);  // Start DMA xfer and return immediately.
-  	if (dblBuf) {
+  	if (isDblBuf) {
   		memcpy(pixels[pIdx^1], pixels[pIdx], numBytes + 1);// copy first buffer to second buffer
 		pIdx ^= 1;
 	}
@@ -137,20 +140,15 @@ void wsSetPixelColor_rgbw(uint16_t n, uint8_t r, uint8_t g, uint8_t b, uint8_t w
 void wsSetPixelColor_c(uint16_t n, uint32_t c)
 {
 	uint16_t r,g,b;
-#if RGBW
 	uint16_t w;
-#endif
    
-//	r = (uint16_t)((c >> 16) & 0xff),
-//	g = (uint16_t)((c >>  8) & 0xff),
-//	b = (uint16_t)(c & 0xff);		
 
 	b = (uint16_t)(c & 0xff);	
 	g = (uint16_t)((c >> 8) & 0xff);	
 	r = (uint16_t)((c >> 16) & 0xff);	
-#if RGBW
-	w = (uint16_t)((c >> 24) & 0xff);	
-#endif
+	if (isRgbw)
+		w = (uint16_t)((c >> 24) & 0xff);	
+
 	
    uint8_t *bptr = &pixels[pIdx][n * bytesPerPixel];
 
@@ -169,12 +167,12 @@ void wsSetPixelColor_c(uint16_t n, uint32_t c)
    *bptr++ = *tPtr++;
    *bptr++ = *tPtr++;
 
-#if RGBW
-   tPtr = &encoderLookup[w * 3]; // + w*2 + w;
-   *bptr++ = *tPtr++;
-   *bptr++ = *tPtr++;
-   *bptr++ = *tPtr++;
-#endif
+	if (isRgbw) {
+		tPtr = &encoderLookup[w * 3]; // + w*2 + w;
+		*bptr++ = *tPtr++;
+		*bptr++ = *tPtr++;
+		*bptr++ = *tPtr++;
+	}
 }
 
 
@@ -248,24 +246,23 @@ void wsClear(void)
 	uint8_t *bptr = pixels[pIdx];// Note first byte in the buffer is a preamble and is always zero. hence the +1
 	uint8_t *tPtr;
 
-#if RGBW
-	for (int i = 0; i < numLEDs * 4; i++) {
-	   tPtr = (uint8_t *)encoderLookup;
-   	   *bptr++ = *tPtr++;
-	   *bptr++ = *tPtr++;
-	   *bptr++ = *tPtr++;	
-//	   *bptr++ = *tPtr++;	
+	if (isRgbw) {
+		for (int i = 0; i < numLEDs * 4; i++) {
+			tPtr = (uint8_t *)encoderLookup;
+			*bptr++ = *tPtr++;
+			*bptr++ = *tPtr++;
+			*bptr++ = *tPtr++;	
+		}
+		*bptr++ = 0;
+	} else {	
+		for (int i = 0; i < numLEDs * 3; i++) {
+			tPtr = (uint8_t *)encoderLookup;
+			*bptr++ = *tPtr++;
+			*bptr++ = *tPtr++;
+			*bptr++ = *tPtr++;	
+		}
+		*bptr++ = 0;	
 	}
-	*bptr++ = 0;	
-#else
-	for (int i = 0; i < numLEDs * 3; i++) {
-	   tPtr = (uint8_t *)encoderLookup;
-   	   *bptr++ = *tPtr++;
-	   *bptr++ = *tPtr++;
-	   *bptr++ = *tPtr++;	
-	}
-	*bptr++ = 0;	
-#endif
 }
 
 
