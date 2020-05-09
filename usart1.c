@@ -22,6 +22,7 @@ void uart1_putc(char ch)
 	}
 }
 
+
 #if 0
 void uart1_PrintChar(char ch)
 {
@@ -137,8 +138,8 @@ void usart_init(void)
 
 	/* Enable the USART1 Receive interrupt: this interrupt is generated when the
 		USART1 receive data register is not empty */
-	USART_ClearITPendingBit(USART1, USART_IT_RXNE);
-	USART_ITConfig(USART1, USART_IT_RXNE, ENABLE);
+///	USART_ClearITPendingBit(USART1, USART_IT_RXNE);
+///	USART_ITConfig(USART1, USART_IT_RXNE, ENABLE);
 }
 
 void USART1_IRQHandler(void)
