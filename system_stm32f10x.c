@@ -86,7 +86,7 @@
 /* #define SYSCLK_FREQ_36MHz  36000000 */
 /* #define SYSCLK_FREQ_48MHz  48000000 */
 /* #define SYSCLK_FREQ_56MHz  56000000 */
-/* #define SYSCLK_FREQ_72MHz  72000000 */
+#define SYSCLK_FREQ_72MHz  72000000
 #endif
 
 
@@ -269,6 +269,7 @@ void SystemCoreClockUpdate (void)
   */
 static void SetSysClock(void)
 {
+#if 0
 #ifdef SYSCLK_FREQ_HSE
   SetSysClockToHSE();
 #elif defined SYSCLK_FREQ_24MHz
@@ -282,7 +283,7 @@ static void SetSysClock(void)
 #elif defined SYSCLK_FREQ_72MHz
   SetSysClockTo72();
 #endif
- 
+#endif 
  /* If none of the define above is enabled, the HSI is used as System clock
     source (default after reset) */ 
 }
