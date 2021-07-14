@@ -191,7 +191,7 @@ int main(void)
 #endif
 
 #if EN_WS2812
-	int rv = wsInit(16, 0, 0);	// wsInit(#leds, rgbw==1, double_buffered==1)
+	int rv = wsInit(16, 1, 1);	// wsInit(#leds, rgbw==1, double_buffered==1)
 	if (rv < 0)
     	uart1_puts("FAILED to Init WS2812b driver.\n\r");
 		
@@ -276,6 +276,8 @@ int main(void)
 	ds18b20_init(ONEWIRE_PORT, ONEWIRE_PIN, TIM2);
 #endif
 	uint32_t loopCnt = 1;
+	int dir = 1;
+	int pIdx = 0;
 	while (1) {
 
 #if EN_BMP280
@@ -295,6 +297,19 @@ int main(void)
 #endif
 
 #if EN_WS2812
+#if 1
+    	uint32_t c1, c4;
+    	c1 = wsColor_rgbw(20, 0, 0, 0);
+    	c4 = wsColor_rgbw(0, 0, 0, 0);
+    	wsSetPixelColor_c(pIdx, c4);
+    	wsSetPixelColor_c(pIdx+dir, c1);
+    	pIdx = pIdx + dir;
+    	if (pIdx == 15) dir = -1;
+    	if (pIdx == 0) dir = 1;
+    	wsShow();
+    	sysTickDelay(60);
+#endif
+#if 0
     	uint32_t c1, c2, c3, c4;
     	c1 = wsColor_rgbw(0, 20, 0, 0);
     	c2 = wsColor_rgbw(0, 8, 0, 0);
@@ -303,6 +318,7 @@ int main(void)
     	wsTail(c1, c2, c3, c4);
     	wsShow();
     	sysTickDelay(60);
+#endif
 #if 0
     	//wsShow();
     	uint32_t tcolor;
